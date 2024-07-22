@@ -1,0 +1,74 @@
+[server.listener."smtp"]
+bind = ["0.0.0.0:25", "[%{env:FLY_PRIVATE_IP}%]:25", "[%{env:FLY_PUBLIC_IP}%]:25"]
+protocol = "smtp"
+tls.implicit = false
+
+[server.listener."submissions"]
+bind = ["0.0.0.0:465", "[%{env:FLY_PRIVATE_IP}%]:465", "[%{env:FLY_PUBLIC_IP}%]:465"]
+protocol = "smtp"
+tls.implicit = true
+
+[server.listener."imaptls"]
+bind = ["0.0.0.0:993", "[%{env:FLY_PRIVATE_IP}%]:993", "[%{env:FLY_PUBLIC_IP}%]:993"]
+protocol = "imap"
+tls.implicit = true
+
+[server.listener."https"]
+bind = ["0.0.0.0:443", "[%{env:FLY_PRIVATE_IP}%]:443", "[%{env:FLY_PUBLIC_IP}%]:443"]
+protocol = "https"
+tls.implicit = true
+
+[server.listener."sieve"]
+bind = ["0.0.0.0:4190", "[%{env:FLY_PRIVATE_IP}%]:4190", "[%{env:FLY_PUBLIC_IP}%]:4190"]
+protocol = "managesieve"
+tls.implicit = true
+
+[server.listener."management"]
+bind = ["0.0.0.0:8080", "[%{env:FLY_PRIVATE_IP}%]:8080", "[%{env:FLY_PUBLIC_IP}%]:8080"]
+protocol = "http"
+tls.implicit = true
+
+[server.http]
+hsts = true
+
+[server.proxy]
+trusted-networks = ["172.16.0.0/12", "::1"]
+
+[lookup.default]
+domain = "%{env:FLY_APP_NAME}.fly.dev"
+hostname = "%{env:FLY_APP_NAME}.fly.dev"
+
+[storage]
+data = "rocksdb"
+fts = "rocksdb"
+blob = "rocksdb"
+lookup = "rocksdb"
+directory = "internal"
+
+[store."rocksdb"]
+type = "rocksdb"
+path = "%{env:STALWART_PATH}%/data"
+compression = "lz4"
+
+[directory."internal"]
+type = "internal"
+store = "rocksdb"
+
+[tracer."stdout"]
+type = "stdout"
+level = "trace"
+ansi = false
+enable = true
+
+[authentication.fallback-admin]
+user = "admin"
+secret = "%{env:STALWART_ADMIN_SECRET}%"
+
+[acme."letsencrypt"]
+directory = "https://acme-v02.api.letsencrypt.org/directory"
+challenge = "tls-alpn-01"
+contact = ["postmaster@%{cfg:lookup.default.domain}%"]
+domains = ["%{env:FLY_APP_NAME}.fly.dev"]
+cache = "%{env:STALWART_PATH}%/etc/acme"
+renew-before = "30d"
+default = true

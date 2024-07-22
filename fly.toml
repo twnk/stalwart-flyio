@@ -1,0 +1,127 @@
+# fly.toml app configuration file generated for twnkmail on 2024-07-12T16:23:39+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'YOUR_APP_HERE'
+primary_region = 'lhr'
+
+# *******************
+# * Essential Ports *
+# *******************
+
+# Port 25 (SMTP): Used for receiving incoming emails from other mail servers. It is essential to keep this port open to ensure your mail server can receive emails from the internet.
+[[services]]
+  protocol = "tcp"
+  internal_port = 25
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 25
+
+# Port 465 (SMTPS): SMTP submission with implicit TLS. This port is used for sending outgoing emails securely. It is recommended to keep this port open to allow secure email submission from email clients.
+[[services]]
+  protocol = "tcp"
+  internal_port = 465
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 465
+
+# Port 993 (IMAPS): IMAP4 with implicit TLS. This port is used by IMAP clients to fetch emails securely. Keeping this port open is necessary for providing secure email access to your users.
+[[services]]
+  protocol = "tcp"
+  internal_port = 993
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 993
+
+# Port 443 (HTTPS): A crucial port used for secure web administration access, JMAP, REST API access, OAuth authentication, ACME TLS-ALPN-01 challenges, autoconfig, and MTA-STS policy retrieval. This port must remain open as it supports multiple critical functionalities.
+[[services]]
+  protocol = "tcp"
+  internal_port = 443
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 443
+
+# ******************
+# * Optional Ports *
+# ******************
+
+# Port 587 (SMTP Submission): This port is used for email submission without implicit TLS (uses STARTTLS). It can be disabled if all mail clients support using port 465 with implicit TLS, which provides enhanced security.
+# [[services]]
+#   protocol = "tcp"
+#   internal_port = 587
+#   [[services.ports]]
+#     port = 587
+
+# Port 143 (IMAP4): Standard IMAP4 port without TLS. It is recommended to disable this port and use port 993 instead to ensure all IMAP traffic is encrypted.
+# [[services]]
+#   protocol = "tcp"
+#   internal_port = 143
+#   [[services.ports]]
+#     port = 143
+
+# Port 4190 (ManageSieve): Used for managing Sieve scripts remotely. If your users utilize Sieve scripts for email filtering, this port should remain open.
+[[services]]
+  protocol = "tcp"
+  internal_port = 4190
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 4190
+
+# Port 110 (POP3) and Port 995 (POP3S): These ports are used for accessing emails via POP3 (port 110) and POP3 with implicit TLS (port 995). Both should be disabled unless there is a specific use case that requires POP3 access, as IMAP provides more functionality and security.
+# [[services]]
+#   protocol = "tcp"
+#   internal_port = 110
+#   [[services.ports]]
+#     port = 100
+
+# [[services]]
+#   protocol = "tcp"
+#   internal_port = 995
+#   [[services.ports]]
+#     port = 995
+
+# Port 8080 (HTTP): Primarily used for initial server setup. It is advisable to keep this port open during the setup phase and disable it afterward to prevent unsecured access to your server.
+[[services]]
+  protocol = "tcp"
+  internal_port = 8080
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  [[services.ports]]
+    handlers = ["proxy_proto"]
+    proxy_proto_options = { version = "v2" }
+    port = 8080
+
+[[mounts]]
+  source = "data"
+  destination = "/data"
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "5GB"
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+[env]
+  STALWART_PATH = '/data/stalwart-mail'
+  
