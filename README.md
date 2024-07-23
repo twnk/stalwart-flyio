@@ -25,3 +25,4 @@ unset SALT && unset HASH
 5. You have the initial setup done. Further steps:
   i. register a custom domain name and reconfigure `config.toml` (keys: `lookup.default.domain`, `acme."letsencrypt".domains`)
   ii. try out a mail client
+  iii. ask fly for a dedicated ipv4 address: `fly ips allocate-v4`
