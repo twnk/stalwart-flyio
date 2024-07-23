@@ -35,8 +35,8 @@ hsts = true
 trusted-networks = ["172.16.0.0/12", "::1"]
 
 [lookup.default]
-domain = "%{env:FLY_APP_NAME}.fly.dev"
-hostname = "%{env:FLY_APP_NAME}.fly.dev"
+domain = "%{env:FLY_APP_NAME}%.fly.dev"
+hostname = "%{env:FLY_APP_NAME}%.fly.dev"
 
 [storage]
 data = "rocksdb"
